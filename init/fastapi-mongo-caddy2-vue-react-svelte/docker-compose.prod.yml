@@ -1,0 +1,47 @@
+version: '3'
+
+
+volumes:
+  mongodata:
+  caddy_data:
+  caddy_config:
+
+
+services:
+
+  fast_api_prod:
+    container_name: fast_api_prod
+    build: ./app
+    command: gunicorn main:app --workers=4 -b "0.0.0.0:5000" --worker-class=uvicorn.workers.UvicornWorker --log-level info
+    restart: unless-stopped
+    volumes:
+      - ./app:/usr/src/app
+    environment:
+      - 'MONGO_DATABASE_NAME=${MONGO_DATABASE_NAME}'
+      - 'MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING}'
+
+
+  mongo_db_prod:
+    container_name: mongo_db_prod
+    image: mongo:4.2-bionic
+    restart: unless-stopped
+    volumes:
+      - 'mongodata:/data/database'  
+    environment:
+      - 'MONGO_DATABASE_NAME=${MONGO_DATABASE_NAME}'
+      - 'MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING}'
+
+
+  caddy_proxy:
+    container_name: caddy_proxy
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./ui/dist:/srv #update this as needed
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+ 

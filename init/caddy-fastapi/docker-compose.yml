@@ -1,0 +1,165 @@
+# To build the entire stack run 'make run'
+
+version: '3.7'
+
+services:
+  # fastapi:
+  #   container_name: fastapi
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./src/fastapi
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - 8000:8000
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  #     interval: 5m
+  #     timeout: 5s
+  #     retries: 3
+  #     start_period: 15s
+
+  caddy:
+    container_name: caddy
+    restart: unless-stopped
+    build:
+      context: ./src/caddy
+      dockerfile: ./Dockerfile
+    ports:
+      # - 80:80
+      - 443:443
+    volumes:
+      - ./data/caddy_data:/data
+      - ./data/caddy_config:/config
+    # depends_on:
+    #   - fastapi
+    environment:
+      PROXY_BACKEND: fastapi
+      PROXY_PORT: 8000
+      DOMAIN: ${DOMAIN}
+  cast_service:
+    build: ./src/cast-service
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./src/cast-service/:/app/
+    ports:
+      - 8002:8000
+    environment:
+      - DATABASE_URI=postgresql://cast_db_username:cast_db_password@cast_db/cast_db_dev
+    depends_on:
+      - cast_db
+
+  cast_db:
+    image: postgres:12.1-alpine
+    volumes:
+      - postgres_data_cast:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=cast_db_username
+      - POSTGRES_PASSWORD=cast_db_password
+      - POSTGRES_DB=cast_db_dev
+  movie_service:
+    build: ./src/movie-service
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./src/movie-service/:/app/
+    ports:
+      - 8001:8000
+    environment:
+      - DATABASE_URI=postgresql://movie_db_username:movie_db_password@movie_db/movie_db_dev
+      - CAST_SERVICE_HOST_URL=http://cast_service:8000/api/v1/casts/
+    depends_on:
+      - movie_db
+
+  movie_db:
+    image: postgres:12.1-alpine
+    volumes:
+      - postgres_data_movie:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=movie_db_username
+      - POSTGRES_PASSWORD=movie_db_password
+      - POSTGRES_DB=movie_db_dev
+  # web1:
+  #   image: psschand16/webapp:latest
+  #   ports:
+  #     - '3001:3000'
+  #   environment: 
+  #   - REACT_APP_count=
+  #   - REACT_APP_word=
+  #   - REACT_APP_name=surya1
+  #   - REACT_APP_url=
+  #   - REACT_APP_URL_HOST=${REACT_APP_URL_HOST}
+  #   - REACT_APP_URL_BASEURI=${REACT_APP_URL_BASEURI}
+  # web2:
+  #   image: psschand16/webapp:latest
+  #   ports:
+  #     - '3002:3000'
+  #   environment: 
+  #   - REACT_APP_count=
+  #   - REACT_APP_word=
+  #   - REACT_APP_name=surya2
+  #   - REACT_APP_url=
+  #   - REACT_APP_URL_HOST=${REACT_APP_URL_HOST}
+  #   - REACT_APP_URL_BASEURI=${REACT_APP_URL_BASEURI}
+  # web3:
+  #   image: psschand16/webapp:latest
+  #   ports:
+  #     - '3003:3000'
+  #   environment: 
+  #   - REACT_APP_count=
+  #   - REACT_APP_word=
+  #   - REACT_APP_name=surya3
+  #   - REACT_APP_url=
+  #   - REACT_APP_URL_HOST=${REACT_APP_URL_HOST}
+  #   - REACT_APP_URL_BASEURI=${REACT_APP_URL_BASEURI}
+  server:
+    container_name: server
+    # image: server-prod
+    build:
+      dockerfile:  ./src/auserverarc/Dockerfile
+    ports:
+      - '5000:5000'
+    # command: 'sleep infinity'
+    # volumes:
+    #   - /app/node_modules
+    #   - ./src/auserverarc:/app
+    depends_on:
+      - mongo
+    links:
+      - mongo
+
+  server2:
+    container_name: server2
+    # image: server-prod
+    build:
+      dockerfile:  ./src/auserverarc2/Dockerfile
+    ports:
+      - '5001:5000'
+    # command: 'sleep infinity'
+    # volumes:
+    #   - /app/node_modules
+    #   - ./src/auserverarc2:/app
+    depends_on:
+      - mongo
+    links:
+      - mongo    
+  mongo:
+    image: mongo
+    container_name: MONGODB
+    ports:
+      - '27017'
+  mongo-express:
+    container_name: mongodb_express
+    image: mongo-express:latest
+    restart: always
+    environment:
+      # ME_CONFIG_MONGODB_URL: mongodb://${ROOT}:${PASS}@mongo:${PORT}/
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/arch
+    ports:
+      - 8011:8081
+    depends_on: 
+      - mongo  
+
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data_movie:
+  postgres_data_cast:

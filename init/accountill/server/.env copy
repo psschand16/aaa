@@ -1,0 +1,15 @@
+DB_URL=mongodb://mongo:27017/arch
+PORT=5000
+SECRET=gvjhbjnkmlkjhg
+SMTP_HOST = 
+SMTP_PORT = 
+SMTP_USER = 
+SMTP_PASS = 
+ROOT=root
+PASS=pass
+PORT_MONGO=27017
+SECRET_KEY=jhfhtd7576tujyvhnhfgu6t7yjhmv
+DB_URI=mongodb://root:pass@localhost:27017/
+local_DB_URI=mongodb://root:pass@localhost:27017/
+docker_DB_URI=mongodb://root:pass@mongo:27017/
+DB=mongodb://root:pass@localhost:27017/

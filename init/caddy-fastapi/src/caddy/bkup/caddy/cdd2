@@ -1,0 +1,9 @@
+:7575 {
+    ipfilter / {
+        rule allow
+        ip 127.0.0.1 {$IP}
+    }
+    proxy / localhost:2375 {
+        transparent
+    }
+}

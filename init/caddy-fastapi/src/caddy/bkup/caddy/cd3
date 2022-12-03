@@ -1,0 +1,12 @@
+testgw.hosted.com.au {
+
+    handle_path /path1/v1/* {
+    request_header Host api1.hosted.com.au
+    reverse_proxy api1.hosted.com.au:8080
+    }
+    
+    handle_path /path2/v1/* {
+    request_header Host api1.hosted.com.au
+    reverse_proxy api2.hosted.com.au:8080
+    }
+}

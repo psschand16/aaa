@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+
+  fast_api_local:
+    container_name: fast_api_local
+    build: ./app
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 5000
+    ports:
+      - '5000:5000'
+    restart: unless-stopped
+    volumes:
+      - ./app:/usr/src/app
+    environment:
+      - 'MONGO_DATABASE_NAME=${MONGO_DATABASE_NAME}'
+      - 'MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING_LOCAL}'
+
+      
+  ui:
+    container_name: ui
+    build: ./ui #update this as needed
+    command: npm run dev
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    volumes:
+      - ./ui:/usr/src/app #update this as needed
+      - ./ui/node_modules:/usr/src/app/node_modules
+    environment:
+      - npm_config_unsafe_perm=true
+
+
+  mongo_db_local:
+    container_name: mongo_db_local
+    image: mongo:4.2-bionic
+    restart: unless-stopped
+    volumes:
+      - 'mongodata:/data/database'  
+    environment:
+      - 'MONGO_DATABASE_NAME=${MONGO_DATABASE_NAME}'
+      - 'MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING_LOCAL}'
+  
+
+  mongo_express_local:
+    container_name: mongo_express_local
+    image: mongo-express
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      - 'ME_CONFIG_MONGODB_URL=${MONGO_CONNECTION_STRING_LOCAL}'
+
+
+  
+volumes:
+  mongodata:

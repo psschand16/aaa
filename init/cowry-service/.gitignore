@@ -1,0 +1,9 @@
+.env
+__pycache__
+.vscode
+.idea
+*.sh
+postgres_data_admin/
+postgres_data_books/
+postgres_data_client/
+.pytest*

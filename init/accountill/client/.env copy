@@ -1,0 +1,5 @@
+REACT_APP_GOOGLE_CLIENT_ID = 305799538076-2r983l4qg9eqqsvlj7r67nmib6btqsvd.apps.googleusercontent.com
+oREACT_APP_API = https://localhost/api/v2
+REACT_APP_API = http://localhost:5000
+oREACT_APP_API = https://localhost
+REACT_APP_URL = http://localhost

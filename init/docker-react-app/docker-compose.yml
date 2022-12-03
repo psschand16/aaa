@@ -1,0 +1,60 @@
+version: '3'
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev  
+    image: psschand16/webapp
+    ports:
+      - '3000:3000'
+    volumes:
+      - /app/node_modules
+      - .:/app
+    environment: 
+    - REACT_APP_A=${A}
+    - REACT_APP_Y=fromdockercompose
+    - REACT_APP_fromenv=${A}
+    - REACT_APP_fromdock=fromdockercompose
+    - REACT_APP_count=
+    - REACT_APP_word=
+    - REACT_APP_name=sura1
+    - REACT_APP_url=
+    - REACT_APP_URL_HOST=${REACT_APP_URL_HOST}
+    - REACT_APP_URL_BASEURI=${REACT_APP_URL_BASEURI}
+    # - REACT_APP_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+    # - REACT_APP_FACEBOOK_CLIENT_ID=${FACEBOOK_CLIENT_ID}  
+  caddyweb:
+    build: 
+      context: .
+      dockerfile: Dockerfile.cdev  
+    # image: psschand16/webapp
+    ports:
+        - "8080:80"
+    volumes:
+      # - /app/node_modules
+      # - .:/app
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+    environment: 
+    - REACT_APP_A=${A}
+    - REACT_APP_Y=fromdockercompose
+    - REACT_APP_fromenv=${A}
+    - REACT_APP_fromdock=fromdockercompose
+    - REACT_APP_count=
+    - REACT_APP_word=
+    - REACT_APP_name=sura1
+    - REACT_APP_url=
+    - REACT_APP_URL_HOST=${REACT_APP_URL_HOST}
+    - REACT_APP_URL_BASEURI=${REACT_APP_URL_BASEURI}
+  # tests:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   volumes:
+  #     - /app/node_modules
+  #     - .:/app
+  #   command: ["npm", "run", "test"]
+volumes:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,34 @@
+{$DOMAIN} {
+
+# always use internal ip rather than host ip, in caddy with host/container name
+  reverse_proxy  server:5000 {
+    header_down Strict-Transport-Security max-age=31536000;
+  }
+
+  reverse_proxy /api/v2/* server2:5000 {
+    header_down Strict-Transport-Security max-age=31536000;
+  }
+
+
+  reverse_proxy /api/v1/casts* cast_service:8000 {
+    header_down Strict-Transport-Security max-age=31536000;
+  }
+
+  reverse_proxy /api/v1/movies* movie_service:8000 {
+    header_down Strict-Transport-Security max-age=31536000;
+  }
+
+  # reverse_proxy {$PROXY_BACKEND}:{$PROXY_PORT}  {
+  #  header_down Strict-Transport-Security max-age=31536000;
+  # }
+
+  log {
+        output file /data/log/caddy/access.log {
+                roll_size 1mb
+                roll_keep 4
+                roll_keep_for 24h
+        }
+    }
+
+
+}

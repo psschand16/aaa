@@ -1,0 +1,12 @@
+asyncpg
+fastapi==0.68.1
+gunicorn
+pydantic==1.7.4
+python-decouple==3.4
+SQLAlchemy
+starlette==0.14.2
+uvicorn
+requests
+databases[postgresql]
+psycopg2-binary
+pytest
