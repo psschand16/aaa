@@ -146,17 +146,17 @@ services:
     container_name: MONGODB
     ports:
       - '27017'
-  mongo-express:
-    container_name: mongodb_express
-    image: mongo-express:latest
-    restart: always
-    environment:
-      # ME_CONFIG_MONGODB_URL: mongodb://${ROOT}:${PASS}@mongo:${PORT}/
-      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/arch
-    ports:
-      - 8011:8081
-    depends_on: 
-      - mongo  
+  # mongo-express:
+  #   container_name: mongodb_express
+  #   image: mongo-express:latest
+  #   restart: always
+  #   environment:
+  #     # ME_CONFIG_MONGODB_URL: mongodb://${ROOT}:${PASS}@mongo:${PORT}/
+  #     ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/arch
+  #   ports:
+  #     - 8011:8081
+  #   depends_on: 
+  #     - mongo  
 
 volumes:
   caddy_data:

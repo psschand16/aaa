@@ -1,0 +1,71 @@
+manam.tk {
+	# Set this path to your site's directory.
+	root * /usr/share/caddy
+
+	# Enable the static file server.
+	file_server
+
+	# Another common task is to set up a reverse proxy:
+	#reverse_proxy localhost:9000
+	#reverse_proxy localhost:8000
+
+	reverse_proxy  172.21.0.1:5000 {
+    header_down Strict-Transport-Security max-age=31536000;
+  	}
+
+	reverse_proxy /api/v2/* 172.21.0.1:5001 {
+    header_down Strict-Transport-Security max-age=31536000;
+  	}
+
+
+  	reverse_proxy /api/v1/casts* 172.21.0.1:8002 {
+    header_down Strict-Transport-Security max-age=31536000;
+  	}
+
+	reverse_proxy /api/v1/movies* 172.21.0.1:8003 {
+    header_down Strict-Transport-Security max-age=31536000;
+  	}
+	
+
+
+
+
+}
+
+manam.tk/code/* {
+  uri strip_prefix /code
+  reverse_proxy localhost:8001
+}
+
+manam.tk/port/* {
+  uri strip_prefix /port
+  reverse_proxy localhost:9000
+}
+
+api.manam.tk {
+	reverse_proxy  172.21.0.1:5000 {
+    header_down Strict-Transport-Security max-age=31536000;
+  	}
+}
+
+code.manam.tk {
+	reverse_proxy  localhost:8001
+}
+
+port.manam.tk {
+	reverse_proxy  localhost:9000 
+}
+
+# handle manam.tk/code/* {
+#       # Set this path to your site's directory.
+#       # root * /usr/share/caddy
+
+#       # Enable the static file server.
+#       # file_server
+
+#       # Another common task is to set up a reverse proxy:
+#       reverse_proxy localhost:8001
+
+#       # Or serve a PHP site through php-fpm:
+#       # php_fastcgi localhost:9000
+# }
